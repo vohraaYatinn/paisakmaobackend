@@ -3,6 +3,7 @@ from django.db import transaction
 from authentication.models import User
 from notification.models import Notification
 from referral.models import LeadsUsers
+from services.models import ServicesWorking
 
 
 class ServiceManager:
@@ -22,3 +23,10 @@ class ServiceManager:
             for i in check_one:
                 i.delete()
         return LeadsUsers.objects.create(user=req_user,customer_number=customer_number, type=service_type, price=price, service_name= service_name)
+
+
+    @staticmethod
+    def get_services_by_name(request, data):
+        service_type = data.get('service_type')
+        data = ServicesWorking.objects.filter(service_name__service_name__icontains=service_type)
+        return data

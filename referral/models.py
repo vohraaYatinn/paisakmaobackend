@@ -16,8 +16,6 @@ class Referral(models.Model):
 class ReferralAdminPricing(models.Model):
     price = models.IntegerField()
 
-    def __str__(self):
-        return self.price
 
 
 # unverified

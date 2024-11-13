@@ -20,7 +20,22 @@ class User(models.Model):
     referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='referrals')
     date_joined = models.DateTimeField(auto_now_add=True, null=True)
     is_active = models.BooleanField(default=True, null=True)
+    is_kyc_given = models.BooleanField(default=False, null=True)
     is_verified = models.BooleanField(default=False, null=True)
+    last_login = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return f'{self.full_name}'
+
+
+class ManageKyc(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='kycuser', null=True, blank=True)
+    document_type = models.CharField(max_length=255)
+    front_image = models.ImageField(upload_to='kycimage/', blank=True, null=True)
+    back_image = models.ImageField(upload_to='kycimage/', blank=True, null=True)
+    status = models.CharField(max_length=30)
+    date_joined = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return f'{self.document_type}'
