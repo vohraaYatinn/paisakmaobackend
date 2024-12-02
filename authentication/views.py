@@ -15,8 +15,7 @@ class  OtpVerification(APIView):
         try:
             data = request.data
             verification_code, user = AuthenticationManager.otp_send_phone(data)
-
-            return Response({"result" : "success", "verification_code":verification_code['data']['verificationId']}, 200)
+            return Response({"result" : "success", "verification_code":verification_code}, 200)
 
         except Exception as err:
             return Response(str(err), 500)
