@@ -159,4 +159,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 CORS_ALLOW_ALL_ORIGINS =True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-ALLOWED_HOSTS = ['inquiry.paisakmao.in', "192.168.29.96:5173", "127.0.0.1", "192.168.29.217", "127.0.0.1","192.168.1.3", "192.168.1.7", "0.0.0.0", "16.170.252.56", "192.168.1.6", "192.168.1.5", "192.168.29.217", "192.168.29.96", "192.168.29.96"]
+ALLOWED_HOSTS = ["api.paisakmao.in", 'inquiry.paisakmao.in', "192.168.29.96:5173", "127.0.0.1", "192.168.29.217", "127.0.0.1","192.168.1.3", "192.168.1.7", "0.0.0.0", "16.170.252.56", "192.168.1.6", "192.168.1.5", "192.168.29.217", "192.168.29.96", "192.168.29.96"]
