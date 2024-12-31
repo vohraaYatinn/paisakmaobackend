@@ -20,7 +20,7 @@ class ServicesWorking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.service_name} - {self.company_name}'
+        return f'{self.service_name} - {self.company_name} - {self.id}'
 
 
 class ServiceDetails(models.Model):

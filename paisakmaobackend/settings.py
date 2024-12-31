@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-p%$#n@5#-(vsrvuk$5a*&*0-w&5sq7_*qc456s-(%4hufp4um-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.3", "192.168.1.7","0.0.0.0","16.170.252.56"]
+ALLOWED_HOSTS = ["127.0.0.1", "192.168.1.3", "192.168.1.7","0.0.0.0","16.170.252.56"]
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
     'authentication',
+    'corsheaders',
     'banner',
     'course',
     'notification',
@@ -61,6 +62,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -155,6 +157,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
+CORS_ALLOW_ALL_ORIGINS =True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-ALLOWED_HOSTS = ["192.168.29.217", "127.0.0.1","192.168.1.3", "192.168.1.7", "0.0.0.0", "16.170.252.56", "192.168.1.6", "192.168.1.5", "192.168.29.217"]
+ALLOWED_HOSTS = ['inquiry.paisakmao.in', "192.168.29.96:5173", "127.0.0.1", "192.168.29.217", "127.0.0.1","192.168.1.3", "192.168.1.7", "0.0.0.0", "16.170.252.56", "192.168.1.6", "192.168.1.5", "192.168.29.217", "192.168.29.96", "192.168.29.96"]

@@ -23,6 +23,8 @@ class User(models.Model):
     is_kyc_given = models.BooleanField(default=False, null=True)
     is_verified = models.BooleanField(default=False, null=True)
     last_login = models.DateTimeField(auto_now_add=True, null=True)
+    profile_photo = models.ImageField(upload_to='profile/', blank=True, null=True)
+
 
     def __str__(self):
         return f'{self.full_name}'

@@ -28,5 +28,5 @@ class ServiceManager:
     @staticmethod
     def get_services_by_name(request, data):
         service_type = data.get('service_type')
-        data = ServicesWorking.objects.filter(service_name__service_name__icontains=service_type)
+        data = ServicesWorking.objects.filter(service_name__service_name__icontains=service_type).select_related("service_name")
         return data

@@ -5,6 +5,7 @@ from django.db import transaction
 from authentication.models import User
 from notification.models import Notification
 from referral.models import LeadsUsers
+from services.models import ServicesWorking
 
 
 class ReferralManager:
@@ -44,3 +45,27 @@ class ReferralManager:
         user = request.user.phone
         lead = LeadsUsers.objects.filter(user__phone_number=user)
         return lead
+
+
+    @staticmethod
+    def add_lead_list_from_domain(request, data):
+        fullName = data.get('fullName')
+        email = data.get('email')
+        phone = data.get('phone')
+        date = data.get('date')
+        serviceType = data.get('serviceType')
+        senderId = data.get('senderId')
+        serviceName = data.get('serviceName')
+        compaignId = data.get('compaignId')
+        price = data.get('price')
+        service_compaign = ServicesWorking.objects.filter(id=compaignId)
+        if not service_compaign:
+            raise Exception("Something wrong with service compaign")
+
+        try:
+            req_user = User.objects.get(id=senderId)
+        except:
+            raise Exception("There is something wrong with the url")
+
+        LeadsUsers.objects.create(user=req_user,customer_email=email,customer_name=fullName,customer_number=phone, type=serviceType, price=service_compaign[0].earnings, service_name= service_compaign[0].service_name.service_name, compaign_id=compaignId)
+        return service_compaign[0].link

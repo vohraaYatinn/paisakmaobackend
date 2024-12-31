@@ -32,3 +32,16 @@ class  getLeadsUser(APIView):
 
         except Exception as err:
             return Response(str(err), 500)
+
+
+class  addDomainListLead(APIView):
+
+    @staticmethod
+    def post(request):
+        try:
+            data = request.data
+            link = ReferralManager.add_lead_list_from_domain(request, data)
+            return Response({"result" : "success", "link":link}, 200)
+
+        except Exception as err:
+            return Response(str(err), 500)

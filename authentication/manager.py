@@ -142,3 +142,16 @@ class AuthenticationManager:
         if user_done:
             user_who_get_referral = User.objects.filter(referred_by=user_done[0]).prefetch_related("wallet")
         return user_who_get_referral
+
+
+
+    @staticmethod
+    @transaction.atomic
+    def change_profile_photo(request, data):
+        phone = request.user.phone
+        photo = request.FILES.get("photo")  # Use `request.FILES` for file uploads
+
+        user = User.objects.get(phone_number=phone)
+        user.profile_photo = photo
+        user.save()
+        return user
