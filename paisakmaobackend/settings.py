@@ -152,7 +152,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 import os
-
+CORS_ALLOWED_ORIGINS = [
+    "https://api.paisakmao.in",       # If this is another allowed origin
+]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # Default primary key field type
