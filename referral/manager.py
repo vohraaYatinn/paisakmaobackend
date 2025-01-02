@@ -57,6 +57,7 @@ class ReferralManager:
         senderId = data.get('senderId')
         serviceName = data.get('serviceName')
         compaignId = data.get('compaignId')
+        tokenNumber = data.get('tokenNumber')
         price = data.get('price')
         service_compaign = ServicesWorking.objects.filter(id=compaignId)
         if not service_compaign:
@@ -67,5 +68,5 @@ class ReferralManager:
         except:
             raise Exception("There is something wrong with the url")
 
-        LeadsUsers.objects.create(user=req_user,customer_email=email,customer_name=fullName,customer_number=phone, type=serviceType, price=service_compaign[0].earnings, service_name= service_compaign[0].service_name.service_name, compaign_id=compaignId)
+        LeadsUsers.objects.create(user=req_user,customer_email=email,customer_name=fullName,customer_number=phone, type=serviceType, price=service_compaign[0].earnings, service_name= service_compaign[0].service_name.service_name, compaign_id=compaignId, unique_id=tokenNumber)
         return service_compaign[0].link
