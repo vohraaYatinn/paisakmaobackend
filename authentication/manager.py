@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 
 from django.contrib.auth.hashers import make_password
@@ -77,9 +78,15 @@ class AuthenticationManager:
         date_of_birth = data.get('date', False)
         gender = data.get('gender', False)
         referralCode = data.get('referralCode', False)
-
+        if gender == "Male":
+            gender = "M"
+        elif gender == "Female":
+            gender = "M"
+        elif gender == "Other":
+            gender = "O"
         if not (phone and name and date_of_birth and gender):
             raise ValidationError("All required fields must be provided.")
+        date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%dT%H:%M:%S.%fZ').date()
 
         # if password != confirm_password:
         #     raise ValidationError("Passwords do not match.")
@@ -96,7 +103,9 @@ class AuthenticationManager:
         user_done = User.objects.create(
             full_name=name,
             phone_number=phone,
-            referral_code=name[0:4]+str(random.randint(1111,8888))
+            referral_code=name[0:4]+str(random.randint(1111,8888)),
+            date_of_birth=date_of_birth,
+            gender= gender
         )
         Wallet.objects.create(
             user=user_done,

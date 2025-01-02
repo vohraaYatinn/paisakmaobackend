@@ -26,6 +26,7 @@ class ReferralAdminPricing(models.Model):
 class LeadsUsers(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leads_user')
+    unique_id = models.CharField(max_length=50, blank=True)
     customer_name = models.CharField(max_length=40)
     customer_number = models.CharField(max_length=20)
     customer_email = models.CharField(max_length=100)
