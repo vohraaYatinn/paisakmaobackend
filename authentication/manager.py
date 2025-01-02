@@ -154,4 +154,27 @@ class AuthenticationManager:
         user = User.objects.get(phone_number=phone)
         user.profile_photo = photo
         user.save()
+        return
+
+
+    @staticmethod
+    @transaction.atomic
+    def get_profile_details(request):
+        phone = request.user.phone
+        user = User.objects.get(phone_number=phone)
+        return user
+
+
+    @staticmethod
+    @transaction.atomic
+    def change_profile_settings(request, data):
+        phone = request.user.phone
+        full_name = data.get("full_name", False)
+        email = data.get("email", False)
+        user = User.objects.get(phone_number=phone)
+        if full_name:
+            user.full_name = full_name
+        if email:
+            user.email = email
+        user.save()
         return user

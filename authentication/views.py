@@ -105,3 +105,36 @@ class ChangeProfilePhoto(APIView):
             return Response({"result" : "failure", "message":"error while adding profile photo"}, 200)
         except Exception as err:
             return Response({"result" : "failure", "message":str(err)}, 200)
+
+
+
+# Create your views here.
+class ChangeProfileSettings(APIView):
+    permission_classes = [IsUserAuth]
+
+    @staticmethod
+    def get(request):
+        try:
+            user = AuthenticationManager.get_profile_details(request)
+            serialized_data = UserSerializer(user).data
+            return Response({"result" : "success", "data":serialized_data}, 200)
+
+        except ValidationError as err:
+            return Response({"result" : "failure", "message":"error while adding profile photo"}, 200)
+        except Exception as err:
+            return Response({"result" : "failure", "message":str(err)}, 200)
+
+
+    @staticmethod
+    def post(request):
+        try:
+            data = request.data
+            user = AuthenticationManager.change_profile_settings(request, data)
+            serialized_data = UserSerializer(user).data
+
+            return Response({"result" : "success", "message":"Profile photo changed successfully", "data":serialized_data}, 200)
+
+        except ValidationError as err:
+            return Response({"result" : "failure", "message":"error while adding profile photo"}, 200)
+        except Exception as err:
+            return Response({"result" : "failure", "message":str(err)}, 200)
