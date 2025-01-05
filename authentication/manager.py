@@ -163,7 +163,7 @@ class AuthenticationManager:
         user = User.objects.get(phone_number=phone)
         user.profile_photo = photo
         user.save()
-        return
+        return user
 
 
     @staticmethod
