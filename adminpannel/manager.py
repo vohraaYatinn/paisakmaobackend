@@ -1,6 +1,5 @@
 
 from rest_framework.exceptions import ValidationError
-
 from adminpannel.models import AdminLogin
 from authentication.models import User, ManageKyc
 from banner.models import Banner, SuccessStory
@@ -186,18 +185,20 @@ class AdminManager:
         company_name = data.get('companyName', False)
         earnings = data.get('earnings', False)
         title = data.get('title', False)
+        link = data.get('link', False)
         description = data.get('description', False)
-        if not service_id or not company_name or not earnings or not title or not description:
+        if not service_id or not company_name or not earnings or not title or not description or not link:
             raise Exception("Service name is compulsory")
         ServicesWorking.objects.create(service_name_id=service_id, company_name=company_name, earnings=earnings,
-                                       title=title, description=description)
+                                       title=title, description=description, link=link)
+
+
     @staticmethod
     def action_offers_related_services(data):
         service_working_id = data.get('serviceWorkingId', False)
         if not service_working_id:
             raise Exception("Service id is compulsory")
         check_service = ServicesWorking.objects.filter(id=service_working_id).delete()
-
 
 
     @staticmethod
