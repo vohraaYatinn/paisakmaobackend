@@ -35,6 +35,7 @@ class Withdrawal(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='withdrawals')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    upi = models.CharField(max_length=100)
     requested_at = models.DateTimeField(auto_now_add=True)
     processed_at = models.DateTimeField(null=True, blank=True)
 
