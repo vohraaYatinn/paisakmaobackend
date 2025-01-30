@@ -1,6 +1,6 @@
 from django.urls import path
 from banner.views import BannerView
-from referral.views import AddLeadToSms, getLeadsUser, addDomainListLead
+from referral.views import AddLeadToSms, getLeadsUser, addDomainListLead, fetchMoneyForReferral
 
 urlpatterns = [
 
@@ -10,5 +10,7 @@ urlpatterns = [
          .as_view(), name="get-leads-user"),
     path(r'add-leads-from-inquiry/', addDomainListLead
          .as_view(), name="add-leads-from-inquiry"),
+    path(r'fetch-money-for-referral/', fetchMoneyForReferral
+         .as_view(), name="fetch-money-for-referral"),
 
 ]

@@ -45,3 +45,15 @@ class  addDomainListLead(APIView):
 
         except Exception as err:
             return Response(str(err), 500)
+
+
+class  fetchMoneyForReferral(APIView):
+
+    @staticmethod
+    def get(request):
+        try:
+            price = ReferralManager.get_price_of_referral()
+            return Response({"result" : "success", "data":price}, 200)
+
+        except Exception as err:
+            return Response(str(err), 500)

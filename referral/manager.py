@@ -4,7 +4,7 @@ from django.db import transaction
 
 from authentication.models import User
 from notification.models import Notification
-from referral.models import LeadsUsers
+from referral.models import LeadsUsers, ReferralAdminPricing
 from services.models import ServicesWorking
 
 
@@ -70,3 +70,9 @@ class ReferralManager:
 
         LeadsUsers.objects.create(user=req_user,customer_email=email,customer_name=fullName,customer_number=phone, type=serviceType, price=service_compaign[0].earnings, service_name= service_compaign[0].service_name.service_name, compaign_id=compaignId, unique_id=tokenNumber)
         return service_compaign[0].link
+
+
+    @staticmethod
+    def get_price_of_referral():
+        referral_amount = ReferralAdminPricing.objects.filter()[0]
+        return referral_amount.price
