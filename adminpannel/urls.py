@@ -2,7 +2,7 @@ from django.urls import path
 from adminpannel.views import AdminView, fetchReferralAmount, UserManagement, UserReferralManagement, BanUserManagement, \
     DeleteUserManagement, KycRequest, WithdrawRequests, ServicesManagement, ActionServicesManagement, BannerUpdate, \
     SuccessStoryUpdate, GetOffersRelatedToServices, ActionOnOffersRelatedToServices, SingleKycRequest, \
-    GetBannerSuccessImages, FetchDashboard, LeadsManagement
+    GetBannerSuccessImages, FetchDashboard, LeadsManagement, LeadsActionRequests
 
 urlpatterns = [
     path(r'admin-login/', AdminView.as_view(), name="banner-post-admin"),
@@ -17,6 +17,7 @@ urlpatterns = [
     path(r'action-kyc-request/', KycRequest.as_view(), name="action-kyc-request"),
     path(r'withdraw-management/', WithdrawRequests.as_view(), name="withdraw-management"),
     path(r'withdraw-action/', WithdrawRequests.as_view(), name="withdraw-action"),
+    path(r'leads-action/', LeadsActionRequests.as_view(), name="withdraw-action"),
     path(r'get-services/', ServicesManagement.as_view(), name="get-services"),
     path(r'add-services/', ServicesManagement.as_view(), name="add-services"),
     path(r'remove-services/', ActionServicesManagement.as_view(), name="remove-services"),

@@ -8,6 +8,7 @@ from services.models import ServicesType, ServicesWorking
 from wallet.models import Withdrawal
 from django.utils import timezone
 from datetime import timedelta
+from django.db import models
 
 class AdminManager:
 
@@ -104,9 +105,20 @@ class AdminManager:
         action = data.get('action', False)
         if not withdraw_id or not action:
             raise Exception("WithdrawId or action is compulsory")
-        withdraw_req = Withdrawal.objects.filter(id=withdraw_id)
-        withdraw_req[0].status = action
-        withdraw_req[0].save()
+        withdraw_req = Withdrawal.objects.get(id=withdraw_id)
+        withdraw_req.status = action
+        withdraw_req.save()
+        return True
+
+    @staticmethod
+    def approval_rejection_of_leads_requests(data):
+        withdraw_id = data.get('WithdrawId', False)
+        action = data.get('action', False)
+        if not withdraw_id or not action:
+            raise Exception("WithdrawId or action is compulsory")
+        withdraw_req = LeadsUsers.objects.get(id=withdraw_id)
+        withdraw_req.status = action
+        withdraw_req.save()
         return True
 
     @staticmethod
@@ -245,8 +257,14 @@ class AdminManager:
             'yearly_active_percentage': round(yearly_active_percentage, 2),
         }
 
-
     @staticmethod
     def fetch_leads_details(data):
-        get_leads = LeadsUsers.objects.filter().select_related("user")
+        get_leads = LeadsUsers.objects.filter().select_related("user").order_by(
+            models.Case(
+                models.When(status="pending", then=0),  # Bring "pending" to the top
+                default=1,
+                output_field=models.IntegerField(),
+            ),
+            "id"  # Secondary sorting (optional)
+        )
         return get_leads

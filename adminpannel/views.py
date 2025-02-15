@@ -141,6 +141,17 @@ class WithdrawRequests(APIView):
         except Exception as err:
             return Response(str(err), 500)
 
+class LeadsActionRequests(APIView):
+
+    @staticmethod
+    def post(request):
+        try:
+            data = request.data
+            check = AdminManager.approval_rejection_of_leads_requests(data)
+            return Response({"result" : "success", "message":"action on Leads have been done successfully"}, 200)
+        except Exception as err:
+            return Response(str(err), 500)
+
 class ServicesManagement(APIView):
 
     @staticmethod
