@@ -17,6 +17,8 @@ class ServicesWorking(models.Model):
     title = models.CharField(max_length=50)
     link = models.TextField(null=True, blank=True)
     description = models.TextField()
+    image = models.ImageField(upload_to='service_images/', null=True, blank=True)
+    is_live = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
