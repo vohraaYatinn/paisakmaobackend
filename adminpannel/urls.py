@@ -2,7 +2,8 @@ from django.urls import path
 from adminpannel.views import AdminView, fetchReferralAmount, UserManagement, UserReferralManagement, BanUserManagement, \
     DeleteUserManagement, KycRequest, WithdrawRequests, ServicesManagement, ActionServicesManagement, BannerUpdate, \
     SuccessStoryUpdate, GetOffersRelatedToServices, ActionOnOffersRelatedToServices, SingleKycRequest, \
-    GetBannerSuccessImages, FetchDashboard, LeadsManagement, LeadsActionRequests
+    GetBannerSuccessImages, FetchDashboard, LeadsManagement, LeadsActionRequests, DownloadExcel, \
+    EditOffersRelatedToServices
 
 urlpatterns = [
     path(r'admin-login/', AdminView.as_view(), name="banner-post-admin"),
@@ -29,5 +30,7 @@ urlpatterns = [
     path(r'success-story/', SuccessStoryUpdate.as_view(), name="success-story"),
     path(r'fetch-dashboard/', FetchDashboard.as_view(), name="fetch-dashboard"),
     path(r'leads-management-dashboard/', LeadsManagement.as_view(), name="leads-management-dashboard"),
+    path(r'user-excel-download/', DownloadExcel.as_view(), name="user-excel-download"),
+    path(r'update-offers-related-to-service/', EditOffersRelatedToServices.as_view(), name="update-offers-related-to-service"),
 ]
 

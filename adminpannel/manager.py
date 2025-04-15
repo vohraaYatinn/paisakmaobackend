@@ -95,7 +95,7 @@ class AdminManager:
 
     @staticmethod
     def get_withdrawal_requests(data):
-        withdraw_request = Withdrawal.objects.filter(status="Pending").select_related("user")
+        withdraw_request = Withdrawal.objects.filter().select_related("user")
         return withdraw_request
 
 
@@ -190,20 +190,28 @@ class AdminManager:
         services_list = ServicesWorking.objects.filter(service_name__id=service_id)
         return services_list
 
-
     @staticmethod
     def add_offers_related_services(data):
-        service_id = data.get('serviceId', False)
-        company_name = data.get('companyName', False)
-        earnings = data.get('earnings', False)
-        title = data.get('title', False)
-        link = data.get('link', False)
-        description = data.get('description', False)
-        if not service_id or not company_name or not earnings or not title or not description or not link:
-            raise Exception("Service name is compulsory")
-        ServicesWorking.objects.create(service_name_id=service_id, company_name=company_name, earnings=earnings,
-                                       title=title, description=description, link=link)
+        service_id = data.get('serviceId')
+        company_name = data.get('companyName')
+        earnings = data.get('earnings')
+        title = data.get('title')
+        link = data.get('link')
+        description = data.get('description')
+        image = data.get('image')  # should be InMemoryUploadedFile
 
+        if not all([service_id, company_name, earnings, title, description, link]):
+            raise Exception("All fields except image are required")
+
+        ServicesWorking.objects.create(
+            service_name_id=service_id,
+            company_name=company_name,
+            earnings=earnings,
+            title=title,
+            description=description,
+            link=link,
+            image=image  # this will auto-save the image
+        )
 
     @staticmethod
     def action_offers_related_services(data):
@@ -268,3 +276,38 @@ class AdminManager:
             "id"  # Secondary sorting (optional)
         )
         return get_leads
+
+    @staticmethod
+    def edit_offers_related_services(data):
+        service_id = data.get('serviceId')
+        company_name = data.get('companyName')
+        title = data.get('title')
+        link = data.get('link')
+        description = data.get('description')
+        image = data.get('image')
+        offer_id = data.get('serviceWorkingId')
+        is_live = data.get('is_live')
+        if is_live == "false":
+            is_live = False
+        else:
+            is_live = True
+
+        if not all([offer_id, service_id, company_name, title, description, link]):
+            raise Exception("All fields except image are required")
+
+        try:
+            offer = ServicesWorking.objects.get(id=offer_id)
+        except ServicesWorking.DoesNotExist:
+            raise Exception("Offer with the given ID does not exist")
+
+        offer.service_name_id = service_id
+        offer.company_name = company_name
+        offer.title = title
+        offer.description = description
+        offer.link = link
+        offer.is_live = is_live
+
+        if image:
+            offer.image = image
+
+        offer.save()

@@ -4,6 +4,12 @@ from adminpannel.manager import AdminManager
 from adminpannel.serializer import UserSerializer, UserSerializerWithWallet, ReferredUserSerializer, \
     KycSerializerWithUser, WithdrawSerializerWithUser, WithdrawSerializer, OfferServicesSerializer, BannerSerializer, \
     StoriesSerializer, LeadsWithUserSerializer
+from openpyxl import Workbook
+from django.http import HttpResponse
+from datetime import datetime
+
+from authentication.models import User
+from referral.models import Referral, LeadsUsers
 
 
 class AdminView(APIView):
@@ -285,3 +291,92 @@ class LeadsManagement(APIView):
             return Response({"result" : "success", "message":"services has been deleted successfully", "data": dashboard_data}, 200)
         except Exception as err:
             return Response(str(err), 500)
+
+
+class DownloadExcel(APIView):
+
+    @staticmethod
+    def get(request):
+        try:
+            wb = Workbook()
+
+            # ==========================
+            # Sheet 1: Users
+            # ==========================
+            ws1 = wb.active
+            ws1.title = "Users"
+            ws1.append([
+                'Full Name', 'Email', 'Phone Number', 'Date of Birth', 'Gender',
+                'Referral Code', 'Referred By', 'Date Joined',
+                'Is Active', 'KYC Given', 'Verified', 'Last Login',
+                'Wallet Balance', 'Total Balance'
+            ])
+
+            users = User.objects.all().select_related('wallet', 'referred_by')
+            for user in users:
+                ws1.append([
+                    user.full_name or '',
+                    user.email or '',
+                    user.phone_number or '',
+                    user.date_of_birth.strftime('%Y-%m-%d') if user.date_of_birth else '',
+                    dict(User.GENDER_CHOICES).get(user.gender, ''),
+                    user.referral_code or '',
+                    user.referred_by.full_name if user.referred_by else '',
+                    user.date_joined.strftime('%Y-%m-%d %H:%M:%S') if user.date_joined else '',
+                    'Yes' if user.is_active else 'No',
+                    'Yes' if user.is_kyc_given else 'No',
+                    'Yes' if user.is_verified else 'No',
+                    user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else '',
+                    str(user.wallet.balance) if hasattr(user, 'wallet') else '0',
+                    str(user.wallet.total_balance) if hasattr(user, 'wallet') else '0'
+                ])
+
+            # ==========================
+            # Sheet 3: Leads
+            # ==========================
+            ws3 = wb.create_sheet(title="Leads")
+            ws3.append([
+                'Lead Owner', 'Customer Name', 'Customer Number', 'Customer Email',
+                'Campaign ID', 'Type', 'Service', 'Price', 'Status', 'Created At'
+            ])
+            leads = LeadsUsers.objects.select_related('user')
+            for lead in leads:
+                ws3.append([
+                    lead.user.full_name,
+                    lead.customer_name,
+                    lead.customer_number,
+                    lead.customer_email,
+                    lead.compaign_id,
+                    lead.type,
+                    lead.service_name,
+                    lead.price,
+                    lead.status,
+                    lead.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                ])
+
+            # ==========================
+            # Send Response
+            # ==========================
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            filename = f"complete_user_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            wb.save(response)
+            return response
+
+        except Exception as err:
+            return Response({'error': str(err)}, status=500)
+
+
+
+
+class EditOffersRelatedToServices(APIView):
+
+    @staticmethod
+    def post(request):
+        try:
+            data = request.data
+            AdminManager.edit_offers_related_services(data)
+            return Response({"result" : "success", "message":"services has been added successfully"}, 200)
+        except Exception as err:
+            return Response(str(err), 500)
+

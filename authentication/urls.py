@@ -1,4 +1,6 @@
 from django.urls import path
+
+from adminpannel.views import DownloadExcel
 from authentication.views import OtpVerification, SignupApi, getDashboardData, fetchMyReferrals, ChangeProfilePhoto, \
     ChangeProfileSettings
 
@@ -11,5 +13,6 @@ urlpatterns = [
     path(r'fetch-my-referrals/', fetchMyReferrals.as_view(), name="fetch-my-referrals"),
     path(r'fetch-my-referrals/', fetchMyReferrals.as_view(), name="fetch-my-referrals"),
     path(r'change-profile-settings/', ChangeProfileSettings.as_view(), name="change-profile-settings"),
+    path(r'user-excel-download/', DownloadExcel.as_view(), name="user-excel-download"),
 ]
 
