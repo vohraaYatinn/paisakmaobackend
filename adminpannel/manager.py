@@ -1,3 +1,4 @@
+from django.db.models import Q
 
 from rest_framework.exceptions import ValidationError
 from adminpannel.models import AdminLogin
@@ -5,7 +6,7 @@ from authentication.models import User, ManageKyc
 from banner.models import Banner, SuccessStory
 from referral.models import ReferralAdminPricing, Referral, LeadsUsers
 from services.models import ServicesType, ServicesWorking
-from wallet.models import Withdrawal
+from wallet.models import Withdrawal, Wallet
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models
@@ -35,9 +36,18 @@ class AdminManager:
 
 
     @staticmethod
-    def gwt_all_users(data):
-        all_users = User.objects.all().prefetch_related("wallet")
-        return all_users
+    def gwt_all_users(search_query=''):
+        users = User.objects.all()
+
+        if search_query:
+            users = users.filter(
+                Q(full_name__icontains=search_query) |
+                Q(email__icontains=search_query) |
+                Q(phone_number__icontains=search_query) |
+                Q(referral_code__icontains=search_query)
+            )
+
+        return users
 
     @staticmethod
     def get_user_referrals(data):
@@ -95,7 +105,9 @@ class AdminManager:
 
     @staticmethod
     def get_withdrawal_requests(data):
-        withdraw_request = Withdrawal.objects.filter().select_related("user")
+        data = dict(data)
+        status = data.get('params[status]', ["Pending"])
+        withdraw_request = Withdrawal.objects.filter(status=status[0]).select_related("user")
         return withdraw_request
 
 
@@ -103,9 +115,13 @@ class AdminManager:
     def approval_rejection_of_withdrawal_requests(data):
         withdraw_id = data.get('WithdrawId', False)
         action = data.get('action', False)
+        if action == "approve":
+            action = "Completed"
+        elif action == "reject":
+            action = "Failed"
         if not withdraw_id or not action:
             raise Exception("WithdrawId or action is compulsory")
-        withdraw_req = Withdrawal.objects.get(id=withdraw_id)
+        withdraw_req = Withdrawal.objects.get(id=withdraw_id).order_by("-processed_at")
         withdraw_req.status = action
         withdraw_req.save()
         return True
@@ -119,6 +135,11 @@ class AdminManager:
         withdraw_req = LeadsUsers.objects.get(id=withdraw_id)
         withdraw_req.status = action
         withdraw_req.save()
+        if action == "successfull":
+            user = withdraw_req.user
+            wallet_user = Wallet.objects.get(user=user)
+            wallet_user.balance =float(wallet_user.balance) + float(withdraw_req.price)
+            wallet_user.save()
         return True
 
     @staticmethod
@@ -269,7 +290,7 @@ class AdminManager:
     def fetch_leads_details(data):
         get_leads = LeadsUsers.objects.filter().select_related("user").order_by(
             models.Case(
-                models.When(status="pending", then=0),  # Bring "pending" to the top
+                models.When(status="unverified", then=0),  # Bring "pending" to the top
                 default=1,
                 output_field=models.IntegerField(),
             ),

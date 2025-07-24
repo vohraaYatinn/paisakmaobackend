@@ -49,8 +49,8 @@ class UserManagement(APIView):
     @staticmethod
     def get(request):
         try:
-            data = request.data
-            all_users = AdminManager.gwt_all_users(data)
+            search_query = request.GET.get('search', '')  # Extract the search parameter
+            all_users = AdminManager.gwt_all_users(search_query)
             serialized_data = UserSerializerWithWallet(all_users, many=True).data
             return Response({"result" : "success", "message":"amount fetched successfully", "data":serialized_data}, 200)
 
@@ -131,7 +131,7 @@ class WithdrawRequests(APIView):
     @staticmethod
     def get(request):
         try:
-            data = request.data
+            data = request.query_params
             withdraw_request = AdminManager.get_withdrawal_requests(data)
             serialized_data = WithdrawSerializerWithUser(withdraw_request, many=True).data
             return Response({"result" : "success", "message":"withdraw request has been fetched successfully", "data":serialized_data}, 200)
